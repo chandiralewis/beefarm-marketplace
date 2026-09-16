@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog & News - Bee Farm Marketplace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Full-page background image with blur */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('WhatsApp Image 2025-09-24 at 18.18.59_8c30e934.jpg') center/cover no-repeat;
+      filter: blur(8px) brightness(0.5);
+      z-index: -1;
+    }
+
+    nav.navbar {
+      background: rgba(7, 7, 7, 0.9) !important;
+    }
+
+    /* Page header */
+    section.py-5.text-center h1 {
+      color: yellow;
+      font-weight: 700;
+    }
+
+    section.py-5.text-center p {
+      color: yellow; /* Yellow font */
+    }
+
+    .section-title {
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+    }
+
+    .news-item {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .card {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      background: rgba(255, 255, 255, 0.95);
+    }
+  </style>
+</head>
+<body>
+
+ <!-- Navbar -->    
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">    
+    <div class="container">    
+      <a class="navbar-brand fw-bold" href="#">🍯 BeeFarm</a>    
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">    
+        <span class="navbar-toggler-icon"></span>    
+      </button>    
+      <div class="collapse navbar-collapse" id="navbarNav">    
+        <ul class="navbar-nav ms-auto">    
+          <li class="nav-item"><a class="nav-link active" href="Bee">Home</a></li>    
+          <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>        
+          <li class="nav-item"><a class="nav-link active" href="Gallery.html">Gallery</a></li>     
+          <li class="nav-item"><a class="nav-link active" href="news.html">News</a></li>     
+          <li class="nav-item"><a class="nav-link active" href="beefarm.html">Login</a></li>     
+          <li class="nav-item"><a class="nav-link active" href="AboutUs.html">About Us</a></li>     
+        </ul>    
+      </div>    
+    </div>    
+  </nav> 
+
+<!-- Page Header -->
+<section class="py-5 text-center">
+  <div class="container">
+    <h1>Blog & News</h1>
+    <p>Latest updates and stories from our BeeFarm Community</p>
+  </div>
+</section>
+
+<!-- Latest News -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title">Latest News</h2>
+      
+    <!-- English News -->
+    <div class="news-item">
+      <h5>BeeFarm Wins National Organic Farming Award 2025</h5>
+      <p>We are proud to announce that BeeFarm has been recognized nationally for our sustainable beekeeping practices.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">Read More</a>
+    </div>
+    <div class="news-item">
+      <h5>New Honey Varieties Now Available</h5>
+      <p>Try our new seasonal honey flavors sourced directly from our local farmers.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">Read More</a>
+    </div>
+    <div class="news-item">
+      <h5>BeeFarm Hosts Community Workshop</h5>
+      <p>Join us for a hands-on workshop about sustainable beekeeping and organic honey production.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">Read More</a>
+    </div>
+      
+    <!-- Sinhala News -->
+    <div class="news-item">
+      <h5>මී මැසී ගොවිපල 2025 ජාතික කාබනික කෘෂිකාර්මික සම්මානය දිනා ගනී</h5>
+      <p>අපගේ පාරිසරික හිතකාමී මධු කෘෂිකාර්මික ක්‍රියාකාරකම් සඳහා මී මැසී ගොවිපල ජාතිකව පිළිගැනීම් ලබා තිබේ.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">වැඩි විස්තර</a>
+    </div>
+    <div class="news-item">
+      <h5>නව මධු වර්ගීකරණ අලෙවි සඳහා</h5>
+      <p>අපගේ දේශීය ගොවීන්ගෙන් සෘජුව ලබාගත් නව සමිද්ධ මධු රසයන් අත්විඳින්න.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">වැඩි විස්තර</a>
+    </div>
+    <div class="news-item">
+      <h5>මී මැසී ගොවිපල ප්‍රජා වැඩමුළුවක් සංවිධානය කරයි</h5>
+      <p>ස්ථිර මධු නිෂ්පාදනය සහ කාබනික මධු පිළිබඳ අත්හදා බැලීමේ වැඩමුළුවකට එක්වන්න.</p>
+      <a href="#" class="btn btn-sm btn-warning fw-bold">වැඩි විස්තර</a>
+    </div>
+      
+  </div>
+</section>
+
+<!-- Blog Posts -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title">Blog Articles</h2>
+    <div class="row g-4">
+      <!-- Blog Post 1 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="WhatsApp Image 2025-09-24 at 18.42.38_797119d5.jpg" class="card-img-top" alt="Blog Post">
+          <div class="card-body">
+            <h5 class="card-title">5 Health Benefits of Organic Honey</h5>
+            <p class="card-text">Discover why natural honey is a superfood packed with nutrients and health benefits.</p>
+            <a href="#" class="btn btn-warning fw-bold">Read More</a>
+          </div>
+        </div>
+      </div>
+      <!-- Blog Post 2 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="WhatsApp Image 2025-09-24 at 12.25.15_57cb1db8.jpg" class="card-img-top" alt="Blog Post">
+          <div class="card-body">
+            <h5 class="card-title">Sustainable Beekeeping Practices</h5>
+            <p class="card-text">Learn how farmers keep bees safe while protecting the environment and biodiversity.</p>
+            <a href="#" class="btn btn-warning fw-bold">Read More</a>
+          </div>
+        </div>
+      </div>
+      <!-- Blog Post 3 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="WhatsApp Image 2025-09-24 at 12.25.16_a4034f89.jpg" class="card-img-top" alt="Blog Post">
+          <div class="card-body">
+            <h5 class="card-title">The Journey from Hive to Home</h5>
+            <p class="card-text">Follow the process of honey production from buzzing bees to sweet jars on your table.</p>
+            <a href="#" class="btn btn-warning fw-bold">Read More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sinhala Blog Post 1 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="31584d9d165eb1affaa72378a7e0efc0.jpg_720x720q80.jpg" class="card-img-top" alt="Sinhala Blog">
+          <div class="card-body">
+            <h5 class="card-title">කාර්මික මධු නිෂ්පාදනයේ අනාගතය</h5>
+            <p class="card-text">කාර්මික මට්ටමේ මධු නිෂ්පාදනය යාමෙන් ගොවීන්ට සහ පාරිසරිකයට ලබා දිය හැකි ප්‍රතිලාභ.</p>
+            <a href="#" class="btn btn-warning fw-bold">වැඩි විස්තර</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sinhala Blog Post 2 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="WhatsApp Image 2025-09-24 at 16.42.35_ace68741.jpg" class="card-img-top" alt="Sinhala Blog">
+          <div class="card-body">
+            <h5 class="card-title">මී මැසි හා කෘෂි කර්මාන්තය</h5>
+            <p class="card-text">මී මැසි ගොවිතැන සහ කෘෂි කර්මාන්තය අතර ඇති සම්බන්ධය පිළිබඳ විස්තර.</p>
+            <a href="#" class="btn btn-warning fw-bold">වැඩි විස්තර</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sinhala Blog Post 3 -->
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="WhatsApp Image 2025-09-26 at 11.31.17_c81596dc.jpg" class="card-img-top" alt="Sinhala Blog">
+          <div class="card-body">
+            <h5 class="card-title">දෛනික ආහාරයට මධු එක් කිරීමේ වටිනාකම</h5>
+            <p class="card-text">සෞඛ්‍ය සුරක්ෂා ගත හැකි පාරම්පරික ක්‍රමයක් ලෙස දෛනික ආහාරයට මධු එකතු කිරීම.</p>
+            <a href="#" class="btn btn-warning fw-bold">වැඩි විස්තර</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 text-center">
+  <div class="container">
+    <p>© 2025 BeeFarm Marketplace. All Rights Reserved.</p>
+    <p>Made with ❤ by BeeFarm Community</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

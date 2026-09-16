@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BeeHoney — Buyer Dashboard</title>
+  <style>
+    :root{--bg:#fcfbf7;--card:#ffffff;--muted:#7a7a7a;--accent:#d69e2e;--accent-2:#f5c469;--success:#2a9d3a;--danger:#e23d28;--glass: rgba(255,255,255,0.6)}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0;background:linear-gradient(180deg,#fff 0%, #fcf8ec 100%);color:#222}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:linear-gradient(90deg, rgba(214,158,46,0.06), rgba(245,196,105,0.04));border-bottom:1px solid rgba(0,0,0,0.04)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav{display:flex;gap:8px;align-items:center}
+    .nav-btn{background:transparent;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--muted)}
+    .nav-btn.active{background:rgba(214,158,46,0.12);color:#6b4b00}
+    main{padding:22px}
+    .container{max-width:1100px;margin:0 auto}
+
+    /* Page layout */
+    .grid-two{display:grid;grid-template-columns:1fr;gap:18px}
+    @media(min-width:980px){.grid-two{grid-template-columns:2fr 1fr}}
+
+    /* Cards */
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    h2{margin:0 0 12px 0;font-size:18px}
+    p.small{margin:0;color:var(--muted);font-size:13px}
+
+    /* Orders table */
+    table{width:100%;border-collapse:collapse}
+    thead th{ text-align:left;padding:12px 10px;font-size:13px;color:var(--muted);border-bottom:1px dashed rgba(0,0,0,0.06)}
+    tbody td{padding:12px 10px;border-bottom:1px solid rgba(0,0,0,0.03);vertical-align:middle}
+    .status-pill{padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+    .status-pending{background:#fff4e5;color:#b36a00}
+    .status-shipped{background:#eafaf2;color:var(--success)}
+    .status-delivered{background:#eef7ff;color:#1565d8}
+
+    /* Progress tracker */
+    .tracker{display:flex;gap:18px;align-items:center}
+    .step{flex:1;text-align:center}
+    .step .dot{width:14px;height:14px;border-radius:50%;margin:0 auto 8px auto;background:#eee}
+    .step.done .dot{background:var(--accent)}
+    .step.current .dot{background:var(--accent-2);box-shadow:0 0 8px rgba(214,158,46,0.2)}
+    .bar{height:6px;background:#f0e6d1;border-radius:6px;position:relative;margin-top:8px}
+    .bar > .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:6px;width:0%}
+
+    /* Wishlist grid */
+    .grid-cards{display:grid;grid-template-columns:repeat(1,1fr);gap:12px}
+    @media(min-width:700px){.grid-cards{grid-template-columns:repeat(3,1fr)}}
+    .product-card{display:flex;flex-direction:column;gap:8px}
+    .product-card img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+    .product-meta{display:flex;justify-content:space-between;align-items:center}
+    .price{font-weight:800}
+    .small-btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+
+    /* Profile form */
+    form .row{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+    @media(min-width:700px){form .two{display:flex;gap:12px} form .two .row{flex:1}}
+    input[type="text"],input[type="email"],input[type="tel"]{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+
+    /* Notifications */
+    .notif{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px}
+    .notif.unread{background:linear-gradient(90deg,rgba(245,196,105,0.08),rgba(214,158,46,0.04))}
+    .notif .msg{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Footer / utilities */
+    footer{padding:18px 28px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Tiny helpers */
+    .btn-primary{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px;cursor:pointer}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">BH</div>
+      <div>
+        <div style="font-weight:800">BeeHoney</div>
+        <div style="font-size:12px;color:var(--muted)">Pure honey &amp; bee care products</div>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-page="orders">My Orders</button>
+      <button class="nav-btn" data-page="tracking">Order Tracking</button>
+      <button class="nav-btn" data-page="wishlist">Wishlist</button>
+      <button class="nav-btn" data-page="profile">Profile</button>
+      <button class="nav-btn" data-page="notifications">Notifications</button>
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+
+      <!-- ORDERS -->
+      <section id="orders" class="page">
+        <div class="card">
+          <h2>My Orders</h2>
+          <p class="small">Recent purchases and statuses</p>
+          <div style="overflow:auto;margin-top:12px">
+            <table>
+              <thead>
+                <tr><th>Order ID</th><th>Items</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="orders-tbody">
+                <!-- populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRACKING -->
+      <section id="tracking" class="page" style="display:none;margin-top:18px">
+        <div class="grid-two">
+          <div class="card">
+            <h2>Order Tracking</h2>
+            <p class="small">Track live progress of an order</p>
+            <div style="margin-top:12px">
+              <label class="muted">Select order</label>
+              <select id="tracking-select" style="width:100%;padding:10px;border-radius:8px;margin-top:8px">
+              </select>
+
+              <div style="margin-top:18px" class="card">
+                <h3 id="track-title">Order #—</h3>
+                <div class="tracker" id="tracker-steps" style="margin-top:12px">
+                  <!-- steps inserted by JS -->
+                </div>
+                <div class="bar" aria-hidden><div class="fill" id="tracker-fill"></div></div>
+                <p class="muted" id="tracker-note" style="margin-top:10px"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Quick actions</h2>
+            <p class="small">Update tracking for demo</p>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn-primary" id="advance-btn">Advance Step</button>
+              <button class="btn-ghost" id="reset-btn">Reset</button>
+            </div>
+            <div style="margin-top:12px" class="muted">Note: This is a demo UI — in a real app actions would be backed by server APIs.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WISHLIST -->
+      <section id="wishlist" class="page" style="display:none;margin-top:18px">
+        <div class="card">
+          <h2>Wishlist</h2>
+          <p class="small">Saved honey products</p>
+          <div style="margin-top:12px" class="grid-cards" id="wishlist-grid">
+            <!-- cards from JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="profile" class="page" style="display:none;margin-top:18px">
+        <div class="card">
+          <h2>Buyer Profile</h2>
+          <p class="small">Edit your details</p>
+          <form id="profile-form" style="margin-top:12px">
+            <div class="two">
+              <div class="row"><label class="muted">Full name</label><input type="text" id="name" required></div>
+              <div class="row"><label class="muted">Phone</label><input type="tel" id="phone"></div>
+            </div>
+            <div class="row"><label class="muted">Email</label><input type="email" id="email" required></div>
+            <div class="row"><label class="muted">Delivery address</label><input type="text" id="address"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn-primary" type="submit">Save</button>
+              <button class="btn-ghost" type="button" id="profile-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section id="notifications" class="page" style="display:none;margin-top:18px">
+        <div class="card">
+          <h2>Notifications</h2>
+          <p class="small">Alerts, messages and order updates</p>
+          <div id="notifications-list" style="margin-top:12px">
+            <!-- items from JS -->
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="btn-ghost" id="mark-all-read">Mark all read</button>
+            <button class="btn-ghost" id="clear-all">Clear all</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Bee Farm Marketplace. All Rights Reserved.</br>
+     Made with ♥ By Bee Farm  Community
+  </footer>
+
+  <script>
+    /*************** Sample data ***************/
+    const orders = [
+      {id:'BH-2025-001', items:['Wildflower Honey 500g','Bee Candle'], date:'2025-09-14', total:28.50, status:'Pending', progress:20},
+      {id:'BH-2025-002', items:['Forest Honey 1kg'], date:'2025-08-30', total:45.00, status:'Shipped', progress:65},
+      {id:'BH-2025-003', items:['Honey Gift Set'], date:'2025-07-09', total:60.00, status:'Delivered', progress:100}
+    ];
+
+    const wishlist = [
+      {id:'p1',title:'Wildflower Honey (500g)',price:12.50,img:'https://images.unsplash.com/photo-1502741126161-b048400d7f36?auto=format&fit=crop&w=800&q=60'},
+      {id:'p2',title:'Forest Honey (1kg)',price:45.00,img:'https://images.unsplash.com/photo-1556228720-6d0096c3a1b5?auto=format&fit=crop&w=800&q=60'},
+      {id:'p3',title:'Bee Pollen Pack',price:9.00,img:'https://images.unsplash.com/photo-1598377967936-4b8e4d5e1265?auto=format&fit=crop&w=800&q=60'}
+    ];
+
+    let notifications = [
+      {id:'n1',title:'Order shipped',msg:'Your order BH-2025-002 has been shipped via courier.',time:'2025-09-01',read:false},
+      {id:'n2',title:'New product: Honeycomb',msg:'We added a new product: Raw Honeycomb jars.',time:'2025-08-20',read:true},
+      {id:'n3',title:'Discount',msg:'Get 10% off on orders above $50 — limited time!',time:'2025-08-01',read:false}
+    ];
+
+    let profile = {name:'Chandira Lewis',phone:'+94 77 123 4567',email:'user@example.com',address:'Colombo, Sri Lanka'};
+
+    /*************** Utils & render ***************/
+    function $(sel){return document.querySelector(sel)}
+    function renderOrders(){
+      const tbody = $('#orders-tbody'); tbody.innerHTML='';
+      orders.forEach(o=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${o.id}</strong></td>
+          <td>${o.items.map(i=>'<div>'+i+'</div>').join('')}</td>
+          <td>${o.date}</td>
+          <td>$${o.total.toFixed(2)}</td>
+          <td><span class="status-pill ${o.status==='Pending'?'status-pending':o.status==='Shipped'?'status-shipped':'status-delivered'}">${o.status}</span></td>
+          <td><button class="small-btn" onclick="openTracking('${o.id}')">Track</button></td>
+        `;
+        tbody.appendChild(tr);
+      })
+    }
+
+    function renderTrackingSelect(){
+      const sel = $('#tracking-select'); sel.innerHTML='';
+      orders.forEach(o=>{
+        const opt = document.createElement('option'); opt.value=o.id; opt.textContent = `${o.id} — ${o.items[0]} (${o.date})`; sel.appendChild(opt);
+      });
+      sel.addEventListener('change', ()=>loadTracker(sel.value));
+      if(orders.length) loadTracker(orders[0].id);
+    }
+
+    const trackingSteps = ['Order placed','Processed','Shipped','Out for delivery','Delivered'];
+    function loadTracker(orderId){
+      const order = orders.find(o=>o.id===orderId);
+      $('#track-title').textContent = `Order ${order.id}`;
+      const container = $('#tracker-steps'); container.innerHTML='';
+      const progress = order.progress; // 0-100
+      trackingSteps.forEach((s,idx)=>{
+        const stepEl = document.createElement('div'); stepEl.className='step';
+        const percentPerStep = 100/(trackingSteps.length-1);
+        const stepPercent = idx*percentPerStep;
+        if(stepPercent <= progress) stepEl.classList.add('done');
+        if(progress>=(stepPercent-1) && progress < (stepPercent+percentPerStep)) stepEl.classList.add('current');
+        stepEl.innerHTML = `<div class="dot" aria-hidden></div><div style="font-size:13px">${s}</div>`;
+        container.appendChild(stepEl);
+      });
+      const fill = $('#tracker-fill'); fill.style.width = progress+'%';
+      $('#tracker-note').textContent = `Progress: ${progress}% — ${order.status}`;
+    }
+
+    function openTracking(orderId){
+      // switch to tracking page and select
+      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page==='tracking'));
+      showPage('tracking');
+      $('#tracking-select').value = orderId; loadTracker(orderId);
+    }
+
+    function renderWishlist(){
+      const grid = $('#wishlist-grid'); grid.innerHTML='';
+      wishlist.forEach(p=>{
+        const card = document.createElement('div'); card.className='card product-card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.title}">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">${p.title}</div>
+              <div class="muted" style="font-size:13px">Pure, unprocessed honey</div>
+            </div>
+            <div class="price">$${p.price.toFixed(2)}</div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="small-btn" onclick="addToCart('${p.id}')">Add to cart</button>
+            <button class="small-btn" onclick="removeFromWishlist('${p.id}')">Remove</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      })
+    }
+
+    function addToCart(pid){alert('Added '+pid+' to cart (demo)')}
+    function removeFromWishlist(pid){
+      const idx = wishlist.findIndex(x=>x.id===pid); if(idx>-1) wishlist.splice(idx,1); renderWishlist();
+    }
+
+    function renderProfile(){
+      $('#name').value = profile.name; $('#phone').value = profile.phone; $('#email').value = profile.email; $('#address').value = profile.address;
+    }
+
+    function renderNotifications(){
+      const list = $('#notifications-list'); list.innerHTML='';
+      notifications.forEach(n=>{
+        const el = document.createElement('div'); el.className = 'notif card '+(n.read? '':'unread');
+        el.innerHTML = `
+          <div style="width:10px;height:10px;border-radius:50%;background:${n.read? '#ccc':'var(--accent)'};margin-top:6px"></div>
+          <div class="msg">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">${n.title}</div>
+              <div class="muted" style="font-size:12px">${n.time}</div>
+            </div>
+            <div class="muted" style="margin-top:6px">${n.msg}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <button class="small-btn" onclick="markAsRead('${n.id}')">Mark read</button>
+            <button class="small-btn" onclick="removeNotif('${n.id}')">Clear</button>
+          </div>
+        `;
+        list.appendChild(el);
+      })
+    }
+
+    function markAsRead(id){ const it = notifications.find(x=>x.id===id); if(it) it.read=true; renderNotifications(); }
+    function removeNotif(id){ notifications = notifications.filter(x=>x.id!==id); renderNotifications(); }
+
+    /*************** Page switching ***************/
+    document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', ()=>{
+      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); showPage(b.dataset.page);
+    }))
+
+    function showPage(page){
+      document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+      document.getElementById(page).style.display='block';
+    }
+
+    /*************** Profile actions ***************/
+    $('#profile-form').addEventListener('submit', (e)=>{
+      e.preventDefault(); profile.name = $('#name').value; profile.phone = $('#phone').value; profile.email = $('#email').value; profile.address = $('#address').value;
+      alert('Profile saved. (demo)');
+    })
+    $('#profile-cancel').addEventListener('click', ()=>renderProfile());
+
+    /*************** Tracking demo buttons ***************/
+    $('#advance-btn').addEventListener('click', ()=>{
+      const id = $('#tracking-select').value; const o = orders.find(x=>x.id===id);
+      if(!o) return; o.progress = Math.min(100, o.progress + 25);
+      if(o.progress>=100){ o.status='Delivered'; } else if(o.progress>=65){ o.status='Shipped'; } else if(o.progress>20){ o.status='Processed'}
+      renderOrders(); loadTracker(id);
+    })
+    $('#reset-btn').addEventListener('click', ()=>{
+      const id = $('#tracking-select').value; const o = orders.find(x=>x.id===id); if(!o) return; o.progress = 0; o.status='Pending'; renderOrders(); loadTracker(id);
+    })
+
+    /*************** Notifications buttons ***************/
+    $('#mark-all-read').addEventListener('click', ()=>{ notifications.forEach(n=>n.read=true); renderNotifications(); })
+    $('#clear-all').addEventListener('click', ()=>{ notifications = []; renderNotifications(); })
+
+    /*************** Init ***************/
+    renderOrders(); renderTrackingSelect(); renderWishlist(); renderProfile(); renderNotifications();
+
+  </script>
+</body>
+</html>

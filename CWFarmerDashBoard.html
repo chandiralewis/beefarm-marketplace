@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Farm Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+       body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('WhatsApp Image 2025-09-25 at 08.53.43_7d620982.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+        /* Dark overlay for better text readability */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, rgba(255, 140, 0, 0.95) 0%, rgba(255, 193, 7, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-right: 3px solid rgba(255, 255, 255, 0.3);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .sidebar-header h1::after {
+            content: '🐝';
+            position: absolute;
+            right: -25px;
+            top: 0;
+            animation: buzz 2s ease-in-out infinite;
+        }
+
+        .sidebar-header p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-right: 15px;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #FF8C00, #FFD700);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .main-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Dashboard Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FF8C00, #FFD700, #FF8C00);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FF8C00;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FF8C00, #FFD700, #FF8C00);
+        }
+
+        .welcome-section h3 {
+            font-size: 1.8rem;
+            color: #FF8C00;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Floating Decorative Elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bee {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: flyAround 20s linear infinite;
+        }
+
+        .bee:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; }
+        .bee:nth-child(2) { top: 60%; right: 25%; animation-delay: 5s; }
+        .bee:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 10s; }
+
+        /* Animations */
+        @keyframes buzz {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2px, -2px) rotate(1deg); }
+            50% { transform: translate(-2px, 2px) rotate(-1deg); }
+            75% { transform: translate(2px, 2px) rotate(1deg); }
+        }
+
+        @keyframes flyAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, -50px) rotate(90deg); }
+            50% { transform: translate(200px, 50px) rotate(180deg); }
+            75% { transform: translate(50px, 100px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+
+            .main-header h2 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        /* Footer Styling */
+        footer {
+            background: linear-gradient(135deg, var(--bee-black), #4A4A4A);
+            color: white;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            border-top: 3px solid var(--honey-yellow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,5 85,25 85,65 50,85 15,65 15,25" fill="none" stroke="rgba(255,215,0,0.1)" stroke-width="2"/></svg>') repeat;
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+
+        footer p {
+            position: relative;
+            z-index: 2;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        footer .text-center {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- Floating Bees -->
+    <div class="floating-elements">
+        <div class="bee">🐝</div>
+        <div class="bee">🐝</div>
+        <div class="bee">🐝</div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>BeeKeeper</h1>
+                <p>Sweet Management</p>
+            </div>
+            
+           <ul class="nav-menu">
+    <li class="nav-item">
+        <a href="CWFarmerDashBoard.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">🏠</span>
+            Farmer Dashboard
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="CWAddProduct.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">🍯</span>
+            Add Honey Product
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="CWManageProducts.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">🏡</span>
+            Manage Hives
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="CWSells Summerry.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">📋</span>
+            Order Management
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="CWEarning&Report.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">📊</span>
+            Reports & Earnings
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="CWOtherProduct.html" class="nav-link" onclick="setActive(this)">
+            <span class="nav-icon">🧴</span>
+            Other Products
+        </a>
+    </li>
+    
+</ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="main-header">
+                <h2>Welcome to Your Bee Farm Dashboard</h2>
+                <p>Monitor your hives, manage products, and grow your honey business</p>
+            </div>
+
+            <!-- Dashboard Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">🏡</span>
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Active Hives</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🍯</span>
+                    <div class="stat-number">1560</div>
+                    <div class="stat-label">Honey Jars</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💰</span>
+                    <div class="stat-number">Rs.1,200,000</div>
+                    <div class="stat-label">Monthly Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📦</span>
+                    <div class="stat-number">42</div>
+                    <div class="stat-label">Pending Orders</div>
+                </div>
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h3>🐝 Sweet Success Starts Here</h3>
+                <p>
+                    Welcome to your comprehensive bee farm management system. From here, you can monitor your hive health, 
+                    track honey production, manage inventory, process customer orders, and analyze your business performance. 
+                    Use the navigation menu on the left to access different sections of your dashboard. 
+                    Let's make your honey business buzz with efficiency!
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <footer class="text-center p-3">
+        <p class="mb-1">© 2025 BeeFarm Marketplace. All Rights Reserved.</p>
+        <p class="mb-0">Made with <span style="color:red;">♥</span> by BeeFarm Community</p>
+    </footer>
+
+    <script>
+        // Set active navigation link
+        function setActive(element) {
+            // Remove active class from all links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // Add active class to clicked link
+            element.classList.add('active');
+        }
+
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
+        // Add parallax effect to floating bees
+        document.addEventListener('mousemove', function(e) {
+            const bees = document.querySelectorAll('.bee');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            bees.forEach((bee, index) => {
+                const speed = (index + 1) * 0.3;
+                const x = mouseX * speed * 20;
+                const y = mouseY * speed * 20;
+                bee.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Animate bees randomly
+        setInterval(() => {
+            const bees = document.querySelectorAll('.bee');
+            bees.forEach((bee, index) => {
+                if (Math.random() > 0.8) {
+                    bee.style.animation = `flyAround ${15 + Math.random() * 10}s linear infinite`;
+                    bee.style.animationDelay = `${index * 2}s`;
+                }
+            });
+        }, 10000);
+
+        // Set first nav item as active by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstNavLink = document.querySelector('.nav-link');
+            if (firstNavLink) {
+                firstNavLink.classList.add('active');
+            }
+        });
+    </script>
+
+    <style>
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 30px;
+            background: white;
+            border-radius: 2px 0 0 2px;
+        }
+    </style>
+</body>
+</html>

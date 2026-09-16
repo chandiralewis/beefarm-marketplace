@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Notifications - BeeFarm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #fffaf0;
+  }
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 230px;
+    height: 100vh;
+    background-color: #1a1a1a;
+    color: #f7c600;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar h2 { text-align: center; margin-bottom: 30px; color: #f7c600; font-weight: bold; }
+  .sidebar a {
+    color: #f7c600;
+    padding: 14px 20px;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    transition: 0.3s;
+  }
+  .sidebar a:hover { background-color: #f7c600; color: #1a1a1a; }
+
+  /* Main content */
+  .main-content {
+    margin-left: 230px;
+    padding: 30px;
+  }
+  .main-content h2 { color: #1a1a1a; margin-bottom: 20px; font-weight: bold; }
+
+  /* Cards */
+  .card { border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  /* Footer */
+  footer {
+    margin-left: 230px;
+    background-color: #1a1a1a;
+    color: #f7c600;
+    text-align: center;
+    padding: 12px 0;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 230px);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>BeeFarm Admin</h2>
+  <a href="admindashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="adminorders.html"><i class="bi bi-bag-check-fill"></i> Customer Orders</a>
+  <a href="trakingadmin.html"><i class="bi bi-clock-history"></i> Track Orders</a>
+  <a href="adminnotification.html" class="active"><i class="bi bi-bell-fill"></i> Notifications</a>
+  <a href="adminprofile.html"><i class="bi bi-person-circle"></i> Profile</a>
+  <a href="BeeLanding.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <h2>Admin — Send Notification</h2>
+
+  <div class="card p-3 mb-3" style="max-width:500px;">
+    <label class="form-label">Target</label>
+    <select id="target" class="form-select mb-2">
+      <option value="all">All</option>
+      <option value="farmer">Farmers</option>
+      <option value="buyer">Buyers</option>
+    </select>
+
+    <label class="form-label">Title</label>
+    <input id="title" class="form-control mb-2" placeholder="Short title">
+
+    <label class="form-label">Message</label>
+    <textarea id="message" class="form-control mb-3" rows="5" placeholder="Your message"></textarea>
+
+    <button id="sendBtn" class="btn btn-dark w-100">Send Notification</button>
+    <div id="statusMsg" class="mt-2"></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  © 2025 BeeFarm Marketplace | Made with <span>♥</span> by BeeFarm Team
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const sendBtn = document.getElementById('sendBtn');
+  const statusMsg = document.getElementById('statusMsg');
+
+  sendBtn.addEventListener('click', async () => {
+    const title = document.getElementById('title').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const target = document.getElementById('target').value;
+
+    if (!title || !message) {
+      statusMsg.innerHTML = '<div class="text-danger small">Title & message required.</div>';
+      return;
+    }
+    sendBtn.disabled = true;
+    statusMsg.innerHTML = 'Sending...';
+
+    const form = new URLSearchParams();
+    form.append('title', title);
+    form.append('message', message);
+    form.append('target', target);
+
+    try {
+      const res = await fetch('create_notification.php', { method: 'POST', body: form });
+      const data = await res.json();
+      if (data.success) {
+        statusMsg.innerHTML = '<div class="text-success small">Notification sent.</div>';
+        document.getElementById('title').value = '';
+        document.getElementById('message').value = '';
+      } else {
+        statusMsg.innerHTML = '<div class="text-danger small">' + (data.error || 'Failed') + '</div>';
+      }
+    } catch (err) {
+      statusMsg.innerHTML = '<div class="text-danger small">Request failed.</div>';
+    } finally {
+      sendBtn.disabled = false;
+    }
+  });
+});
+</script>
+</body>
+</html>

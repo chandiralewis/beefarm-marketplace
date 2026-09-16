@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BeeHoney — Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <style>:root{--bg:#fcfbf7;--card:#ffffff;--muted:#7a7a7a;--accent:#d69e2e;--accent-2:#f5c469;--success:#2a9d3a;--danger:#e23d28;--glass: rgba(255,255,255,0.6)}
+*{box-sizing:border-box}
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0;background:linear-gradient(180deg,#fff 0%, #fcf8ec 100%);color:#222}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:linear-gradient(90deg, rgba(214,158,46,0.06), rgba(245,196,105,0.04));border-bottom:1px solid rgba(0,0,0,0.04)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+nav{display:flex;gap:8px;align-items:center}
+.nav-btn{background:transparent;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--muted);text-decoration:none}
+.nav-btn.active{background:rgba(214,158,46,0.12);color:#6b4b00}
+main{padding:22px}
+.container{max-width:1100px;margin:0 auto}
+
+/* Page layout */
+.grid-two{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:980px){.grid-two{grid-template-columns:2fr 1fr}}
+
+/* Cards */
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+h2{margin:0 0 12px 0;font-size:18px}
+p.small{margin:0;color:var(--muted);font-size:13px}
+
+/* Orders table */
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:12px 10px;font-size:13px;color:var(--muted);border-bottom:1px dashed rgba(0,0,0,0.06)}
+tbody td{padding:12px 10px;border-bottom:1px solid rgba(0,0,0,0.03);vertical-align:middle}
+.status-pill{padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+.status-pending{background:#fff4e5;color:#b36a00}
+.status-shipped{background:#eafaf2;color:var(--success)}
+.status-delivered{background:#eef7ff;color:#1565d8}
+
+/* Progress tracker */
+.tracker{display:flex;gap:18px;align-items:center}
+.step{flex:1;text-align:center}
+.step .dot{width:14px;height:14px;border-radius:50%;margin:0 auto 8px auto;background:#eee}
+.step.done .dot{background:var(--accent)}
+.step.current .dot{background:var(--accent-2);box-shadow:0 0 8px rgba(214,158,46,0.2)}
+.bar{height:6px;background:#f0e6d1;border-radius:6px;position:relative;margin-top:8px}
+.bar > .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:6px;width:0%}
+
+/* Wishlist grid */
+.grid-cards{display:grid;grid-template-columns:repeat(1,1fr);gap:12px}
+@media(min-width:700px){.grid-cards{grid-template-columns:repeat(3,1fr)}}
+.product-card{display:flex;flex-direction:column;gap:8px}
+.product-card img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+.price{font-weight:800}
+.small-btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+
+/* Profile form */
+form .row{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+@media(min-width:700px){form .two{display:flex;gap:12px} form .two .row{flex:1}}
+input[type="text"],input[type="email"],input[type="tel"]{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+
+/* Notifications */
+.notif{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px}
+.notif.unread{background:linear-gradient(90deg,rgba(245,196,105,0.08),rgba(214,158,46,0.04))}
+.notif .msg{flex:1}
+.muted{color:var(--muted);font-size:13px}
+
+/* Footer / utilities */
+footer{padding:18px 28px;text-align:center;color:var(--muted);font-size:13px}
+
+/* Tiny helpers */
+.btn-primary{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px;cursor:pointer}
+</style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="logo">BH</div>
+      <div>
+        <div style="font-weight:800">BeeHoney</div>
+        <div style="font-size:12px;color:var(--muted)">Pure honey & bee care products</div>
+      </div>
+    </div>
+    <nav>
+      <a href="orders.html" class="nav-btn">My Orders</a>
+      <a href="tracking.html" class="nav-btn">Order Tracking</a>
+      <a href="wishlist.html" class="nav-btn">Wishlist</a>
+      <a href="profile.html" class="nav-btn active">Profile</a>
+      <a href="notifications.html" class="nav-btn">Notifications</a>
+    </nav>
+  </header>
+
+  <!-- Page content -->
+  <main>
+    <div class="container">
+      <section class="page">
+        <div class="card">
+          <h2>My Profile</h2>
+          <p class="small">Update your personal information</p>
+
+          <form id="profile-form" style="margin-top:15px;">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label>Email</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label>Phone</label>
+            <input type="text" id="phone" placeholder="Enter your phone number">
+
+            <label>Address</label>
+            <textarea id="address" placeholder="Enter your address"></textarea>
+
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+
+          <p id="profile-message" style="margin-top:12px; color:green; display:none;">
+            ✅ Profile updated successfully!
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 Bee Farm Marketplace. All Rights Reserved.<br>
+    Made with ♥ By Bee Farm Community
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

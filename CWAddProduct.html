@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Honey Product - BeeKeeper Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #fffbe6, #ffefc6);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating bees */
+    .floating-bee {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.8;
+      animation: floatBee 25s linear infinite;
+    }
+
+    @keyframes floatBee {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      20% { opacity: 1; }
+      50% { transform: translateY(50vh) translateX(100px); }
+      80% { opacity: 1; }
+      100% { transform: translateY(-10vh) translateX(-100px); opacity: 0; }
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #ff9800;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      animation: fadeInDown 1s ease;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.4rem;
+      color: #fff !important;
+    }
+
+    .nav-link {
+      color: #fff !important;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffe082 !important;
+      transform: translateY(-2px);
+    }
+
+    /* Form container */
+    .form-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      margin-top: 40px;
+      animation: fadeInUp 1s ease;
+      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .form-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .form-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #ff9800;
+      animation: popIn 1s ease;
+    }
+
+    .form-subtitle {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      color: #555;
+      animation: fadeIn 1.5s ease;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-control, .form-select {
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #ff9800;
+      box-shadow: 0 0 8px rgba(255,152,0,0.4);
+      transform: scale(1.02);
+    }
+
+    .btn {
+      border-radius: 12px;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #ff9800;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: #e68900;
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(255,152,0,0.4);
+    }
+
+    .btn-secondary:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: auto;
+      background: #fff;
+      border-top: 2px solid #ffe08a;
+      animation: fadeIn 2s ease;
+      z-index: 2;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Bee emoji bounce */
+    .bee-loader {
+      display: inline-block;
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-5px); }
+    }
+
+    /* Image preview styles */
+    .image-preview {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 15px;
+      border: 3px solid #ff9800;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Loading spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .spinner-border {
+      color: #ff9800;
+    }
+
+    /* Success message */
+    .success-message {
+      display: none;
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Bees -->
+  <div class="floating-bee" style="left: 10%; animation-delay: 0s;">🐝</div>
+  <div class="floating-bee" style="left: 40%; animation-delay: 10s;">🐝</div>
+  <div class="floating-bee" style="left: 70%; animation-delay: 20s;">🐝</div>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <span class="bee-loader">🐝</span>
+        BeeKeeper Pro
+        <span class="bee-loader">🍯</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="CWFarmerDashBoard.html">
+              <i class="fas fa-chart-line me-1"></i> Farmer Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="CWAddProduct.html">
+              <i class="fas fa-plus me-1"></i> Add Honey
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="CWManageProduct.html">
+              <i class="fas fa-hive me-1"></i> Manage Hives
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="CWSellsSummerry.html">
+              <i class="fas fa-shopping-basket me-1"></i> Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="CWEarning&Report.html">
+              <i class="fas fa-file-alt me-1"></i> Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="CWOtherProduct.html">
+              <i class="fas fa-leaf me-1"></i> Other Products
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Form Section -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <!-- Form Container -->
+        <div class="form-container">
+          <h2 class="form-title">
+            <span class="bee-loader">🐝</span>
+            Create Sweet Product Listing
+          </h2>
+          <p class="form-subtitle">Let's get your honey buzzing in the marketplace!</p>
+
+          <!-- Success Message -->
+          <div class="success-message" id="successMessage">
+            <h5><i class="fas fa-check-circle me-2"></i>Product Added Successfully!</h5>
+            <p class="mb-0">Your honey product has been added to your inventory and is ready for sale!</p>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Adding your sweet product...</p>
+          </div>
+
+          <form id="addProductForm">
+            <!-- Basic Information -->
+            <div class="form-section">
+              <h4 class="section-title">📝 Basic Information</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="productName" class="form-label">🍯 Product Name</label>
+                    <input type="text" class="form-control" id="productName" name="productName" placeholder="e.g., Wild Flower Honey" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="productCategory" class="form-label">🏷️ Category</label>
+                    <select class="form-select" id="productCategory" name="productCategory" required>
+                      <option value="">Select honey type...</option>
+                      <option value="wildflower">Wild Flower Honey</option>
+                      <option value="acacia">Acacia Honey</option>
+                      <option value="clover">Clover Honey</option>
+                      <option value="manuka">Manuka Honey</option>
+                      <option value="eucalyptus">Eucalyptus Honey</option>
+                      <option value="lavender">Lavender Honey</option>
+                      <option value="raw">Raw Honey</option>
+                      <option value="organic">Organic Honey</option>
+                      <option value="honeycomb">Honeycomb</option>
+                      <option value="creamed">Creamed Honey</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="productDescription" class="form-label">📖 Product Description</label>
+                <textarea class="form-control" id="productDescription" name="productDescription" rows="4" placeholder="Tell customers about your honey's unique qualities..." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="weight" class="form-label">⚖️ Weight/Size</label>
+                <input type="text" class="form-control" id="weight" name="weight" placeholder="e.g., 500g" required>
+              </div>
+            </div>
+
+            <!-- Product Images -->
+            <div class="form-section">
+              <h4 class="section-title">📸 Product Image</h4>
+              <div class="mb-3">
+                <label class="form-label">🖼️ Upload Product Photo</label>
+                <input type="file" class="form-control" id="productImage" name="productImage" accept="image/*">
+                <img id="imagePreview" class="image-preview" alt="Product Preview">
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-center mt-4">
+              <button type="button" class="btn btn-secondary me-3" onclick="window.location.href='CWManageProduct.html'">
+                <i class="fas fa-arrow-left me-2"></i> Back to Products
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> Add Honey Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center p-3">
+    <p class="mb-1">© 2025 BeeFarm Marketplace. All Rights Reserved.</p>
+    <p class="mb-0">Made with <span style="color:red;">♥</span> by BeeFarm Community</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    class ProductAdder {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        // Form submission
+        document.getElementById('addProductForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleFormSubmit();
+        });
+
+        // Image preview
+        document.getElementById('productImage').addEventListener('change', (e) => {
+          this.handleImagePreview(e);
+        });
+
+        // Real-time validation
+        this.setupValidation();
+      }
+
+      setupValidation() {
+        const requiredFields = ['productName', 'productCategory', 'productDescription', 'weight'];
+        
+        requiredFields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          field.addEventListener('blur', () => this.validateField(field));
+          field.addEventListener('input', () => this.clearFieldError(field));
+        });
+      }
+
+      validateField(field) {
+        const value = field.value.trim();
+        const isValid = value.length > 0;
+
+        if (!isValid) {
+          field.classList.add('is-invalid');
+          this.showFieldError(field, 'This field is required');
+        } else {
+          field.classList.remove('is-invalid');
+          field.classList.add('is-valid');
+          this.clearFieldError(field);
+        }
+
+        return isValid;
+      }
+
+      clearFieldError(field) {
+        field.classList.remove('is-invalid');
+        const errorDiv = field.parentNode.querySelector('.invalid-feedback');
+        if (errorDiv) {
+          errorDiv.remove();
+        }
+      }
+
+      showFieldError(field, message) {
+        this.clearFieldError(field);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'invalid-feedback';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+      }
+
+      handleImagePreview(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.style.display = 'none';
+        }
+      }
+
+      validateForm() {
+        const form = document.getElementById('addProductForm');
+        const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+          if (!this.validateField(field)) {
+            isValid = false;
+          }
+        });
+
+        // Validate weight format
+        const weightField = document.getElementById('weight');
+        const weight = weightField.value.trim();
+        const weightRegex = /^\d+(\.\d+)?\s*(g|kg|ml|l|oz|lb)$/i;
+        
+        if (weight && !weightRegex.test(weight)) {
+          this.showFieldError(weightField, 'Please enter a valid weight format (e.g., 500g, 1.5kg)');
+          weightField.classList.add('is-invalid');
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      async handleFormSubmit() {
+        if (!this.validateForm()) {
+          this.showNotification('Please fill in all required fields correctly', 'error');
+          return;
+        }
+
+        const formData = this.collectFormData();
+        
+        try {
+          // Show loading
+          this.showLoading();
+          
+          // Simulate processing time
+          await this.delay(1500);
+          
+          // Save product to localStorage
+          this.saveProduct(formData);
+          
+          // Hide loading and show success
+          this.hideLoading();
+          this.showSuccess();
+          
+          // Clear form after a delay
+          setTimeout(() => {
+            this.resetForm();
+            this.hideSuccess();
+          }, 3000);
+
+          // Show success notification
+          this.showNotification('Product added successfully! Check your Manage Products page.', 'success');
+          
+        } catch (error) {
+          this.hideLoading();
+          this.showNotification('Error adding product. Please try again.', 'error');
+          console.error('Error adding product:', error);
+        }
+      }
+
+      collectFormData() {
+        const form = document.getElementById('addProductForm');
+        const imageFile = document.getElementById('productImage').files[0];
+        
+        const formData = {
+          name: document.getElementById('productName').value.trim(),
+          category: document.getElementById('productCategory').value,
+          description: document.getElementById('productDescription').value.trim(),
+          weight: document.getElementById('weight').value.trim(),
+          image: null,
+          dateAdded: new Date().toISOString()
+        };
+
+        // Handle image
+        if (imageFile) {
+          // For demo purposes, we'll create a placeholder image path
+          // In a real application, you'd upload to a server and get a URL
+          formData.image = URL.createObjectURL(imageFile);
+        }
+
+        return formData;
+      }
+
+      saveProduct(productData) {
+        // Get existing products
+        const existingProducts = JSON.parse(localStorage.getItem('honeyProducts') || '[]');
+        
+        // Generate new ID
+        const newId = existingProducts.length > 0 ? Math.max(...existingProducts.map(p => p.id)) + 1 : 1;
+        
+        // Create new product
+        const newProduct = {
+          id: newId,
+          name: productData.name,
+          category: productData.category,
+          description: productData.description,
+          weight: productData.weight,
+          image: productData.image,
+          lastUpdated: new Date().toISOString().split('T')[0],
+          dateAdded: productData.dateAdded
+        };
+
+        // Add to products array
+        existingProducts.unshift(newProduct); // Add to beginning for visibility
+        
+        // Save back to localStorage
+        localStorage.setItem('honeyProducts', JSON.stringify(existingProducts));
+        
+        // Set flag for manage products page to know there's a new product
+        localStorage.setItem('newProductAdded', JSON.stringify(newProduct));
+        
+        console.log('Product saved:', newProduct);
+      }
+
+      showLoading() {
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('addProductForm').style.display = 'none';
+      }
+
+      hideLoading() {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('addProductForm').style.display = 'block';
+      }
+
+      showSuccess() {
+        document.getElementById('successMessage').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      hideSuccess() {
+        document.getElementById('successMessage').style.display = 'none';
+      }
+
+      resetForm() {
+        const form = document.getElementById('addProductForm');
+        form.reset();
+        
+        // Clear validation classes
+        form.querySelectorAll('.is-valid, .is-invalid').forEach(field => {
+          field.classList.remove('is-valid', 'is-invalid');
+        });
+        
+        // Clear error messages
+        form.querySelectorAll('.invalid-feedback').forEach(error => {
+          error.remove();
+        });
+        
+        // Hide image preview
+        document.getElementById('imagePreview').style.display = 'none';
+      }
+
+      showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-warning';
+        
+        notification.className = `alert ${bgColor} text-white alert-dismissible fade show position-fixed`;
+        notification.style.cssText = `
+          top: 20px;
+          right: 20px;
+          z-index: 1060;
+          min-width: 300px;
+          border-radius: 15px;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        `;
+        
+        notification.innerHTML = `
+          <div>${message}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 5000);
+      }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      new ProductAdder();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐝 Bee Farm Marketplace - Magical Auth</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+/* ---------------- CAPTCHA IMAGE STYLES ---------------- */
+.captcha-images img {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+.captcha-images img.selected {
+  border: 6px solid yellow;
+  box-shadow: 0 0 12px yellow;
+}
+
+/* ---------------- PAGE BACKGROUND ---------------- */
+body {
+  background: url('white1.jpg') no-repeat center center fixed;
+  background-size: 1000px auto;
+  background-color: #fbeec1;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------------- AUTH CARD ---------------- */
+.auth-card {
+  width: 420px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 1s ease-in-out;
+}
+.auth-card.glow { animation: glowEffect 2.5s infinite alternate; }
+@keyframes glowEffect {
+  0%   { box-shadow: 0 0 10px rgba(255, 193, 7, 0.3); }
+  50%  { box-shadow: 0 0 25px rgba(255, 193, 7, 0.7); }
+  100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
+}
+.auth-header { text-align: center; margin-bottom: 20px; }
+.auth-header img { width: 70px; }
+
+/* ---------------- BUTTONS ---------------- */
+.btn-bee {
+  background: #ffc107;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.btn-bee:hover {
+  background: #e0a800;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #ffc107;
+}
+
+/* ---------------- INPUT FIELDS ---------------- */
+.auth-card input, .auth-card select {
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 8px;
+}
+
+/* ---------------- LINKS ---------------- */
+.auth-card a { color: #fff; text-decoration: none; transition: color 0.3s ease; }
+.auth-card a:hover { color: #ffc107; }
+
+/* ---------------- ANIMATIONS ---------------- */
+.bee { position: absolute; font-size: 22px; animation: fly 8s linear infinite; }
+.bee1 { top: 10%; left: -30px; animation-delay: 0s; }
+.bee2 { top: 50%; left: -40px; animation-delay: 3s; }
+.bee3 { top: 80%; left: -50px; animation-delay: 6s; }
+@keyframes fly {
+  0%   { transform: translateX(0) rotate(0deg); }
+  25%  { transform: translateX(120%) translateY(-20px) rotate(20deg); }
+  50%  { transform: translateX(240%) translateY(10px) rotate(-20deg); }
+  75%  { transform: translateX(360%) translateY(-10px) rotate(15deg); }
+  100% { transform: translateX(480%) translateY(0) rotate(0deg); }
+}
+.drop {
+  position: absolute;
+  top: -20px;
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 30% 30%, #ffd633, #ffb300);
+  border-radius: 50%;
+  animation: drip 4s linear infinite;
+  opacity: 0.9;
+}
+.drop1 { left: 20%; animation-delay: 0s; }
+.drop2 { left: 40%; animation-delay: 1s; }
+.drop3 { left: 60%; animation-delay: 2s; }
+.drop4 { left: 80%; animation-delay: 3s; }
+@keyframes drip {
+  0%   { top: -20px; transform: scale(0.8); opacity: 0.9; }
+  70%  { transform: scale(1); opacity: 1; }
+  100% { top: 110%; transform: scale(0.6); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ---------------- LOGIN SECTION ---------------- -->
+<div id="login" class="auth-card glow">
+  <div class="auth-header">
+    <img src="honey (1).png" alt="bee">
+    <h3>Login</h3>
+    <p class="text-light">Welcome back to Bee Farm 🐝</p>
+  </div>
+  <form id="loginForm">
+    <input type="hidden" name="action" value="login">
+    <div class="mb-3"><label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+    </div>
+    <div class="mb-3"><label>Password</label>
+      <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+    </div>
+    <div id="captcha-container" class="mb-3">
+      <p>Select all images with bees:</p>
+      <div class="captcha-images d-flex flex-wrap">
+        <img src="bee2.jpg" data-correct="true" class="m-1">
+        <img src="flower.jpg" data-correct="false" class="m-1">
+        <img src="bee1.jpg" data-correct="true" class="m-1">
+        <img src="tree.jpg" data-correct="false" class="m-1">
+        <img src="flower1.jpg" data-correct="false" class="m-1">
+        <img src="tree1.jpg" data-correct="false" class="m-1">
+        <img src="bee3.jpg" data-correct="true" class="m-1">
+        <img src="bee4.jpg" data-correct="true" class="m-1">
+      </div>
+      <p id="captcha-result" class="text-light mt-2"></p>
+    </div>
+    <button type="submit" class="btn btn-bee w-100">Login</button>
+    <div class="d-flex justify-content-between mt-3">
+      <a href="#forgot">Forgot Password?</a>
+      <a href="#register">Create Account</a>
+    </div>
+    <div class="text-center mt-2">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#faqModal">FAQ</a> | 
+      <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms</a>
+    </div>
+  </form>
+  <div class="bee bee1">🐝</div><div class="bee bee2">🐝</div><div class="bee bee3">🐝</div>
+  <div class="drop drop1"></div><div class="drop drop2"></div><div class="drop drop3"></div><div class="drop drop4"></div>
+</div>
+
+<!-- ---------------- REGISTER SECTION ---------------- -->
+<div id="register" class="auth-card glow d-none">
+  <div class="auth-header">
+    <img src="honey (1).png" alt="bee">
+    <h3>Register</h3>
+    <p class="text-light">Join as Buyer or Farmer</p>
+  </div>
+  <form id="registerForm">
+    <input type="hidden" name="action" value="register">
+    <div class="mb-3"><label>Full Name</label>
+      <input type="text" name="full_name" class="form-control" placeholder="Enter your name" required>
+    </div>
+    <div class="mb-3"><label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+    </div>
+    <div class="mb-3"><label>Password</label>
+      <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+    </div>
+    <div class="mb-3"><label>Role</label>
+      <select name="role" class="form-select">
+        <option value="buyer">Buyer</option>
+        <option value="farmer">Farmer</option>
+        <option value="admin">Admin</option>
+
+      </select>
+    </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="termsCheck">
+      <label class="form-check-label" for="termsCheck">
+        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms & Conditions</a>
+      </label>
+    </div>
+    <button type="submit" class="btn btn-bee w-100">Register</button>
+    <p class="text-center mt-3"><a href="#login">Back to Login</a></p>
+  </form>
+  <div class="bee bee1">🐝</div><div class="bee bee2">🐝</div><div class="bee bee3">🐝</div>
+  <div class="drop drop1"></div><div class="drop drop2"></div><div class="drop drop3"></div><div class="drop drop4"></div>
+</div>
+
+<!-- ---------------- FORGOT PASSWORD SECTION ---------------- -->
+<div id="forgot" class="auth-card glow d-none">
+  <div class="auth-header">
+    <img src="honey (1).png" alt="bee">
+    <h3>Forgot Password</h3>
+    <p class="text-light">Reset your account password</p>
+  </div>
+  <form id="forgotForm">
+    <input type="hidden" name="action" value="forgot">
+    <div class="mb-3"><label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Enter registered email" required>
+    </div>
+    <div class="mb-3"><label>New Password</label>
+      <input type="password" name="password" class="form-control" placeholder="Enter new password" required>
+    </div>
+    <button type="submit" class="btn btn-bee w-100">Reset Password</button>
+    <p class="text-center mt-3"><a href="#login">Back to Login</a></p>
+  </form>
+  <div class="bee bee1">🐝</div><div class="bee bee2">🐝</div><div class="bee bee3">🐝</div>
+  <div class="drop drop1"></div><div class="drop drop2"></div><div class="drop drop3"></div><div class="drop drop4"></div>
+</div>
+
+<!-- ---------------- REGISTER POPUP IMAGE MODAL ---------------- -->
+<div class="modal fade" id="registerImageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-body text-center">
+        <img src="popup1.jpg" alt="Welcome Bee" class="img-fluid rounded">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- TERMS MODAL ---------------- -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">Terms & Conditions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>1. Users must provide accurate details.</p>
+        <p>2. Roles must be respected in transactions.</p>
+        <p>3. Keep login credentials safe.</p>
+        <p>4. All sales must follow platform policies.</p>
+        <p>5. Terms may change; check regularly.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- FAQ MODAL ---------------- -->
+<div class="modal fade" id="faqModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">FAQ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Q:</strong> How do I register as a farmer?<br><strong>A:</strong> Select Farmer role in Register.</p>
+        <p><strong>Q:</strong> Can buyers track orders?<br><strong>A:</strong> Yes, on dashboard.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- JAVASCRIPT ---------------- -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function showSection(id){
+  document.querySelectorAll('.auth-card').forEach(div=>div.classList.add('d-none'));
+  document.getElementById(id).classList.remove('d-none');
+}
+
+// NAVIGATION LINKS
+document.querySelectorAll('a[href^="#"]').forEach(link=>{
+  link.addEventListener('click',function(e){
+    const target = this.getAttribute('href').substring(1);
+
+    if(target === "register"){
+      e.preventDefault();
+      const popup = new bootstrap.Modal(document.getElementById('registerImageModal'));
+      popup.show();
+      setTimeout(()=>{
+        popup.hide();
+        showSection("register");
+      },3000);
+    }
+    else if(['login','forgot'].includes(target)){
+      e.preventDefault();
+      showSection(target);
+    }
+  });
+});
+
+// CAPTCHA
+function initCaptcha(containerId) {
+  const container = document.getElementById(containerId);
+  const images = container.querySelectorAll('.captcha-images img');
+  const resultText = container.querySelector('#captcha-result');
+  images.forEach(img => {
+    img.addEventListener('click', () => {
+      img.classList.toggle('selected');
+    });
+  });
+  container.verify = function() {
+    let allCorrect = true;
+    images.forEach(img => {
+      const isSelected = img.classList.contains('selected');
+      const isCorrect = img.dataset.correct === "true";
+      if (isSelected !== isCorrect) allCorrect = false;
+    });
+    if(allCorrect){
+      resultText.textContent = "Verified! ✅";
+      resultText.style.color = "lightgreen";
+    } else {
+      resultText.textContent = "Incorrect! ❌";
+      resultText.style.color = "red";
+    }
+    return allCorrect;
+  }
+}
+initCaptcha('captcha-container');
+
+// LOGIN FORM
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const captcha = document.getElementById('captcha-container');
+  if(!captcha.verify()){
+    alert("Please complete CAPTCHA correctly!");
+    return;
+  }
+  fetch('auth.php', {method:'POST', body:new FormData(this)})
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        if(data.status === 'success'){
+            // Redirect based on role
+            if(data.role === 'buyer'){
+                window.location.href = 'dashboard.html'; // Replace later
+            } else if(data.role === 'farmer'){
+                window.location.href = 'CWFarmerDashBoard.html'; // Replace later
+            } else if(data.role === 'admin'){
+                window.location.href = 'admindashboard.html'; // Replace later
+            }
+        }
+    });
+});
+
+// REGISTER FORM
+document.getElementById('registerForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  if(!document.getElementById('termsCheck').checked){
+    alert("You must agree to Terms & Conditions to register.");
+    return;
+  }
+
+  fetch('auth.php', {method:'POST', body:new FormData(this)})
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      if(data.status === 'success'){
+        window.location.href = 'profile.html'; // Go to profile creation
+      }
+    });
+});
+
+// PROFILE FORM (profile.html)
+document.getElementById('profileForm')?.addEventListener('submit', function(e){
+  e.preventDefault();
+  fetch('profile.php', {
+    method: 'POST',
+    body: new FormData(this)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    if(data.status === 'success'){
+      // Redirect based on session role
+      fetch('get_role.php') // optional: you can create a simple PHP to return session role
+        .then(res => res.json())
+        .then(roleData => {
+          if(roleData.role === 'buyer') window.location.href = 'dashboard.html';
+          else if(roleData.role === 'farmer') window.location.href = 'CWFarmerDashBoard.html';
+          else if(roleData.role === 'admin') window.location.href = 'admindashboard.html';
+        });
+    }
+  })
+  .catch(err => console.error(err));
+});
+// FORGOT FORM
+document.getElementById('forgotForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  fetch('auth.php',{method:'POST',body:new FormData(this)})
+  .then(res=>res.text()).then(data=>alert(data));
+});
+
+</script>
+</body>
+</html>

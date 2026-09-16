@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeKeeper Dashboard - Honey Sales Summary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --honey-yellow: #FFD700;
+            --bee-orange: #FFA500;
+            --bee-black: #2C2C2C;
+            --honeycomb-orange: #FF8C00;
+            --pollen-yellow: #FFEB3B;
+            --amber: #FFBF00;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFFACD 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Floating Bee Animation */
+        .floating-bee {
+            position: fixed;
+            font-size: 2rem;
+            color: var(--bee-orange);
+            z-index: 1000;
+            animation: flyAround 15s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes flyAround {
+            0% { transform: translate(-100px, 50vh) rotate(0deg); }
+            25% { transform: translate(25vw, 20vh) rotate(45deg); }
+            50% { transform: translate(75vw, 70vh) rotate(90deg); }
+            75% { transform: translate(50vw, 30vh) rotate(135deg); }
+            100% { transform: translate(100vw, 50vh) rotate(180deg); }
+        }
+        
+        /* Honeycomb Background Pattern */
+        .honeycomb-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+            background-image: 
+                repeating-conic-gradient(from 30deg, transparent 0 60deg, var(--honey-yellow) 60deg 120deg);
+            background-size: 60px 60px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--bee-orange), var(--honeycomb-orange));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,5 85,25 85,65 50,85 15,65 15,25" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') repeat;
+            background-size: 80px 80px;
+            opacity: 0.3;
+        }
+        
+        .summary-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(255, 165, 0, 0.15);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            position: relative;
+            background: white;
+            border: 3px solid transparent;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 165, 0, 0.3);
+            border-color: var(--honey-yellow);
+        }
+        
+        .summary-card::before {
+            content: '🍯';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+        
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+            position: relative;
+            z-index: 2;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .card-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card-label {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card-trend {
+            font-size: 1rem;
+            margin-top: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .trend-up {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2E7D32;
+            border: 2px solid #4CAF50;
+        }
+        
+        .trend-down {
+            background: rgba(244, 67, 54, 0.15);
+            color: #C62828;
+            border: 2px solid #F44336;
+        }
+        
+        /* Honey-themed card styles */
+        .honey-sales {
+            background: linear-gradient(135deg, var(--honey-yellow), var(--amber));
+            color: var(--bee-black);
+        }
+        
+        .honey-orders {
+            background: linear-gradient(135deg, var(--bee-orange), var(--honeycomb-orange));
+            color: white;
+        }
+        
+        .hive-products {
+            background: linear-gradient(135deg, var(--pollen-yellow), var(--honey-yellow));
+            color: var(--bee-black);
+        }
+        
+        .monthly-honey {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+        }
+        
+        .pending-orders {
+            background: linear-gradient(135deg, #FF6347, #FF4500);
+            color: white;
+        }
+        
+        .bee-customers {
+            background: linear-gradient(135deg, var(--bee-black), #4A4A4A);
+            color: var(--honey-yellow);
+        }
+        
+        .nav-tabs {
+            border: none;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.1);
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--bee-black);
+            border: none;
+            border-radius: 12px;
+            margin-right: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, var(--bee-orange), var(--honeycomb-orange));
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background: var(--honey-yellow);
+            color: var(--bee-black);
+            transform: translateY(-2px);
+        }
+        
+        .quick-stats {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 220, 0.9));
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.1);
+            margin-top: 2rem;
+            border: 2px solid var(--honey-yellow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--bee-black), #4A4A4A) !important;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--honey-yellow) !important;
+        }
+        
+        .navbar-nav .nav-link {
+            color: white !important;
+            transition: all 0.3s ease;
+            margin: 0 0.2rem;
+            border-radius: 8px;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            background: var(--bee-orange);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link.active {
+            background: var(--honey-yellow);
+            color: var(--bee-black) !important;
+        }
+        
+        /* Bee Loading Animation */
+        .bee-loader {
+            display: inline-block;
+            animation: fly 1s ease-in-out infinite alternate;
+        }
+        
+        @keyframes fly {
+            0% { transform: translateX(0px) rotate(-5deg); }
+            100% { transform: translateX(10px) rotate(5deg); }
+        }
+        
+        /* Stats animation */
+        .stat-number {
+            display: inline-block;
+            animation: countUp 2s ease-out forwards;
+        }
+        
+        @keyframes countUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer Styling */
+        footer {
+            background: linear-gradient(135deg, var(--bee-black), #4A4A4A);
+            color: white;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            border-top: 3px solid var(--honey-yellow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,5 85,25 85,65 50,85 15,65 15,25" fill="none" stroke="rgba(255,215,0,0.1)" stroke-width="2"/></svg>') repeat;
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+
+        footer p {
+            position: relative;
+            z-index: 2;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        footer .text-center {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Honeycomb Background -->
+    <div class="honeycomb-bg"></div>
+    
+    <!-- Floating Bees -->
+    <div class="floating-bee" style="animation-delay: 0s;">🐝</div>
+    <div class="floating-bee" style="animation-delay: 5s;">🐝</div>
+    <div class="floating-bee" style="animation-delay: 10s;">🐝</div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="bee-loader">🐝</span>
+                BeeKeeper Pro
+                <span class="bee-loader">🍯</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="CWFarmerDashBoard.html">
+                            <i class="fas fa-chart-line me-1"></i>Farmer Dashboard</a>
+                    </li>
+                   <li class="nav-item">
+                         <a class="nav-link active" href="CWAddProduct.html">
+                       <i class="fas fa-plus me-1"></i> Add Honey
+                             </a>
+                       </li>
+                        <li class="nav-item">
+                         <a class="nav-link active" href="CWManageProduct.html">
+                       <i class="fas fa-plus me-1"></i> Manage Hives
+                             </a>
+                       </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="CWSells Summerry.html">
+                            <i class="fas fa-shopping-basket me-1"></i>Orders</a>
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link active" href="CWEarning&Report.html">
+                       <i class="fas fa-plus me-1"></i> Reports
+                             </a>
+                       </li>
+                        <li class="nav-item">
+                        <a class="nav-link active" href="CWOtherProduct.html">
+                       <i class="fas fa-plus me-1"></i> Other Products
+                             </a>
+                       </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2">
+                        <i class="fas fa-chart-line me-3"></i>
+                        <span class="bee-loader">🐝</span>
+                        BeeKeeper Dashboard
+                        <span class="bee-loader">🍯</span>
+                    </h1>
+                    <p class="mb-0 opacity-75">Sweet success! Here's your honey business overview</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Time Period Selector -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="updateDashboard('today')">
+                            <i class="fas fa-sun me-2"></i>Today
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="updateDashboard('week')">
+                            <i class="fas fa-calendar-week me-2"></i>This Week
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="updateDashboard('month')">
+                            <i class="fas fa-calendar-alt me-2"></i>This Month
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="updateDashboard('year')">
+                            <i class="fas fa-calendar me-2"></i>This Year
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sales Summary Cards -->
+        <div class="row">
+            <!-- Total Honey Sales -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card honey-sales">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            🍯
+                        </div>
+                        <div class="card-value stat-number" id="totalSales">Rs.18,05945</div>
+                        <div class="card-label">Total Honey Sales</div>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +15.2% sweeter than last period
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Orders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card honey-orders">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            🛒
+                        </div>
+                        <div class="card-value stat-number" id="totalOrders">342</div>
+                        <div class="card-label">Honey Orders</div>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +12.8% buzz from customers
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hive Products -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card hive-products">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            🏠
+                        </div>
+                        <div class="card-value stat-number" id="totalProducts">23</div>
+                        <div class="card-label">Hive Products</div>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +5 new bee products
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Honey Revenue -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card monthly-honey">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            🥇
+                        </div>
+                        <div class="card-value stat-number" id="monthlyRevenue">Rs.15,2680</div>
+                        <div class="card-label">Monthly Revenue</div>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +18.5% golden growth
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Orders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card pending-orders">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            ⏰
+                        </div>
+                        <div class="card-value stat-number" id="pendingOrders">8</div>
+                        <div class="card-label">Pending Orders</div>
+                        <div class="card-trend trend-down">
+                            <i class="fas fa-arrow-down"></i> -6 busy bees working
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Happy Customers -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card summary-card bee-customers">
+                    <div class="card-body text-center">
+                        <div class="card-icon">
+                            😊
+                        </div>
+                        <div class="card-value stat-number" id="totalCustomers">189</div>
+                        <div class="card-label">Happy Customers</div>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +12 sweet customers
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="quick-stats">
+                    <h4 class="mb-4" style="color: var(--bee-black);">
+                        <span class="bee-loader">⚡</span>
+                        <span style="color: var(--bee-orange);">Hive Quick Stats</span>
+                        <span class="bee-loader">🐝</span>
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <h5 style="color: var(--bee-orange); font-size: 2rem;">🍯 Rs.60,789</h5>
+                            <small style="color: var(--bee-black); font-weight: 600;">Today's Sweet Sales</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h5 style="color: var(--honeycomb-orange); font-size: 2rem;">📦 28</h5>
+                            <small style="color: var(--bee-black); font-weight: 600;">Orders Today</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h5 style="color: var(--amber); font-size: 2rem;">💰RS. 2,042</h5>
+                            <small style="color: var(--bee-black); font-weight: 600;">Avg Order Value</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h5 style="color: var(--honey-yellow); font-size: 2rem;">⭐ 96%</h5>
+                            <small style="color: var(--bee-black); font-weight: 600;">Customer Happiness</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center p-3">
+        <p class="mb-1">© 2025 BeeFarm Marketplace. All Rights Reserved.</p>
+        <p class="mb-0">Made with <span style="color:red;">♥</span> by BeeFarm Community</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Display current date
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Mock data for different time periods
+        const dashboardData = {
+            today: {
+                totalSales: 'Rs.607,890.00',
+                totalOrders: '28',
+                totalProducts: '23',
+                monthlyRevenue: 'Rs.52,680.00',
+                pendingOrders: '8',
+                totalCustomers: '189'
+            },
+            week: {
+                totalSales: 'Rs.180,945.00',
+                totalOrders: '342',
+                totalProducts: '23',
+                monthlyRevenue: 'Rs.50,600.00',
+                pendingOrders: '8',
+                totalCustomers: '189'
+            },
+            month: {
+                totalSales: 'Rs.152,680.00',
+                totalOrders: '1,247',
+                totalProducts: '23',
+                monthlyRevenue: '$40,680.00',
+                pendingOrders: '8',
+                totalCustomers: '189'
+            },
+            year: {
+                totalSales: 'Rs.100,645,230',
+                totalOrders: '12,458',
+                totalProducts: '23',
+                monthlyRevenue: 'Rs.152,680.00',
+                pendingOrders: '8',
+                totalCustomers: '189'
+            }
+        };
+
+        // Update dashboard based on selected period
+        function updateDashboard(period) {
+            // Update active tab
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Get data for the period
+            const data = dashboardData[period];
+            
+            // Update card values with animation
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.style.opacity = '0.5';
+                    element.style.transform = 'scale(0.8)';
+                    
+                    setTimeout(() => {
+                        element.textContent = data[key];
+                        element.style.opacity = '1';
+                        element.style.transform = 'scale(1)';
+                        element.style.transition = 'all 0.5s ease';
+                    }, 200);
+                }
+            });
+
+            // Add some visual feedback
+            document.querySelectorAll('.summary-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = 'bounce 0.6s ease';
+                    setTimeout(() => {
+                        card.style.animation = 'bounce 2s infinite';
+                    }, 600);
+                }, index * 100);
+            });
+        }
+
+        // Animate numbers on page load
+        function animateNumbers() {
+            document.querySelectorAll('.stat-number').forEach(element => {
+                element.style.animationDelay = Math.random() * 1 + 's';
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            animateNumbers();
+            
+            // Update time every minute
+            setInterval(updateCurrentDate, 60000);
+            
+            // Add random bee movements
+            setInterval(() => {
+                const bees = document.querySelectorAll('.floating-bee');
+                bees.forEach(bee => {
+                    if (Math.random() > 0.7) {
+                        bee.style.animation = 'flyAround ' + (10 + Math.random() * 10) + 's linear infinite';
+                    }
+                });
+            }, 5000);
+        });
+
+        // Add hover effects for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.summary-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02) rotate(1deg)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
